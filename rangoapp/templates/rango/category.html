@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ category.name }}{% endblock title %}
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="p-3 bg-light">
+                <h5>Search For a Page</h5>
+                <form class="form-inline mb-3" method="get" action="{% url 'rangoapp:show_category' category.slug %}">
+                    <input type="text" id="search-input" class="form-control" placeholder="Start typing...">
+                </form>
+                <a href=""><ul id="suggestions" class="list-unstyled"></ul></a> <!-- Suggestions will be populated here -->
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="p-4 bg-light">
+                <h2>{{ category.name }}</h2>
+                <p>Visits: <b>{{ category.views }}</b></p>
+                {% if category.likes > 1 %}
+                    <div>
+                        <strong id="like-count">{{ category.likes }}</strong> people like this category
+                        {% if user.is_authenticated %}
+                        <button id="like-btn" data-category-id="{{ category.id }}" class="btn btn-primary">Like</button>
+                        {% endif %}
+                    </div>
+                {% elif category.likes == 1 %}
+                <p><b>{{ category.likes }}</b> person likes this category</p>
+                {% endif %}
+                <ul class="list-unstyled">
+                    {% for page in pages %}
+                        <li>
+                            <a href="{% url 'rangoapp:goto' %}?page_id={{page.id}}">{{ page.title }}</a>
+                            {% if page.views > 1 %}
+                            <span class="badge bg-primary"> {{ page.views }} views</span>
+                            {% elif page.views == 1 %}
+                            <span class="badge bg-primary"> {{ page.views }} view</span>
+                            {% endif %}
+                        </li>
+                    {% empty %}
+                        <li>No pages currently available in this category.</li>
+                        <h5 class="card-title mt-4"><a class="btn btn-dark" href="{% url 'rangoapp:add_page' category.slug %}" role="button">Add Page</a></h5>
+                    {% endfor %}
+                </ul>
+            </div>
+            
+            <div class="p-4 bg-light mt-4">
+                <h5>Search for a page</h5>
+                <form method="get" action="" class="form-inline">
+                    <input type="text" name="query" class="form-control mr-2" placeholder="Search">
+                    <button type="submit" class="btn btn-success">Search</button>
+                </form>
+                <br>
+                {% if query %}
+                <h3>Search Results for "<b>{{ query }}</b>"</h3> 
+                {% if search_results %}
+                    <ul class="list-unstyled mt-3">
+                        {% for result in search_results %}
+                            <li>
+                                {% if result.url %}
+                                <a href="{{ result.url }}">{{ result.title }}</a>
+                                <p class="list-group-item-text">{{ result.summary }}</p>
+                                {% else %}
+                                <a href="{% url 'rangoapp:show_category' category.slug %}">{{ result.title }}</a>
+                                {% endif %}
+                                <p>{{ result.snippet }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p>No results found for "{{ query }}".</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+    
+<script>
+    $(document).ready(function () {
+        $('#like-btn').click(function () {
+            var categoryId = $(this).data('category-id');
+            $.ajax({
+                url: "{% url 'rangoapp:like_category' %}",
+                data: { 'category_id': categoryId },
+                success: function (data) {
+                    $('#like-count').text(data.likes);
+                },
+                error: function () {
+                    alert('Error liking the category.');
+                }
+            });
+        });
+    });
+
+    document.getElementById("search-input").addEventListener("input", function () {
+        const query = this.value;
+
+        if (query.length > 0) {
+            fetch(`/page-suggestions/?query=${query}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    let suggestionBox = document.getElementById('suggestions');
+                    suggestionBox.innerHTML = '';  // Clear previous suggestions
+
+                    data.forEach(item => {
+                        let listItem = document.createElement('li');
+                        listItem.textContent = item;
+                        suggestionBox.appendChild(listItem);
+                    });
+                });
+        }
+    });
+    function debounce(func, delay) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+    categoryInput.addEventListener('input', debounce(function () {
+        const query = this.value;
+        // Make the AJAX request here as before
+    }, 3));  // Delay of 300 milliseconds
+</script>
+
+     {% endblock content %}

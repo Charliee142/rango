@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}User Dashboard{% endblock title %}
+{% block content %}
+<!-- form_selection.html -->
+<div class="container mt-5">
+    <div class='col-6 offset-3 border shadow py-2'>
+    <div class="row">
+        <!-- Card for Edit Profile Form -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-id-card fa-2x mb-3"></i>
+                    <h5 class="card-title"><a class="btn btn-dark" href="#" role="button">Edit Profile Form</a></h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Paragraph -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-paragraph fa-2x mb-3"></i>
+                    <h5 class="card-title"><a class="btn btn-dark" href="{% url 'rangoapp:register_profile' %}" role="button">Profile</a></h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Registration Form -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-user-plus fa-2x mb-3"></i>
+                    <h5 class="card-title"><a class="btn btn-dark" href="{% url 'rangoapp:profile' user.username %}" role="button">Edit Profile</a></h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Submission Form -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-file-signature fa-2x mb-3"></i>
+                    <h5 class="card-title"><a class="btn btn-dark" href="{% url 'rangoapp:add_category' %}" role="button">Add Category and Page</a></h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for User Dashboard -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-tachometer-alt fa-2x mb-3"></i>
+                    <h5 class="card-title"><a class="btn btn-dark" href="{% url 'password_change' %}" role="button">Change Password</a></h5>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Image -->
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-image fa-2x mb-3"></i>
+                    <h5 class="card-title"><a class="btn btn-danger" href="{% url 'auth_logout' %}" role="button">Logout</a></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+</div>
+
+{% endblock content %}

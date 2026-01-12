@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Profile Registration{% endblock title %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class='col-6 offset-3 border shadow py-2'>
+<form method="post" action="." enctype="multipart/form-data">
+{% csrf_token %}
+{{ form|crispy }}
+<input type="submit" class="btn btn-primary" value="Submit">
+</form>
+</div>
+</div>
+{% endblock content %}

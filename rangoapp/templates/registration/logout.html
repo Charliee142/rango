@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Logout{% endblock title %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class='col-6 offset-3 border shadow py-2'>
+<h2 class="text-center">Logout</h2>
+<p>Are you sure you want to log out?</p>
+
+<!-- Form that submits a POST request to log the user out -->
+<form method="post" action="{% url 'auth_logout' %}">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Confirm Logout</button>
+    <!-- Optional cancel button to redirect back to a safe page -->
+    <a href="{% url 'rangoapp:index' %}" class="btn btn-secondary">Cancel</a>
+</form>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}How to Metube with Django!{% endblock title %}
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="p-3 bg-light">
+                <h5>Find a Category</h5>
+                <form class="form-inline mb-3" method="get" action="">
+                    <input type="text" id="search-input" class="form-control" placeholder="Start typing...">
+                </form>
+                <a href=""> <ul id="suggestions" class="list-unstyled"></ul> </a><!-- Suggestions will be populated here -->
+            </div>
+        </div>
+        <div class="col-lg-8 jumbotron text-center bg-light">
+            <h1 class="display-4">Ready to Metube!</h1>
+            <p class="lead">Find, Add, Share and Metube useful links and resources.</p>
+        </div>
+        <div class="col-lg-4">
+            <h4>Top Five Pages</h4>
+            {% if most_viewed_pages %}
+            <ul class="list-unstyled">
+                {% for page in most_viewed_pages %}
+                <li><a href="{{ page.url }}">{{ page.title }}</a> <span class="badge bg-primary"> {{ page.views }}
+                        views</span></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <strong>There are no categories present.</strong>
+            {% endif %}
+        </div>
+        <div class="col-lg-4">
+            <h4>Top Five Most Liked Categories</h4>
+            {% if most_liked_categories %}
+            <ul class="list-unstyled">
+                {% for category in most_liked_categories %}
+                <li><a href="{% url 'rangoapp:show_category' category.slug %}">{{ category.name }}</a> <span class="badge bg-primary"> {{ category.likes }} likes</span>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <strong>There are no categories present.</strong>
+            {% endif %}
+        </div>
+        <div class="col-lg-4">
+            <h4>Top Five Most Viewed Categories</h4>
+            {% if most_viewed_categories %}
+            <ul class="list-unstyled">
+                {% for category in most_viewed_categories %}
+                <li><a href="{% url 'rangoapp:show_category' category.slug %}">{{ category.name }}</a> <span
+                        class="badge bg-primary"> {{ category.views }} views</span></li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <strong>There are no categories present.</strong>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+
+<script>
+    document.getElementById("search-input").addEventListener("input", function () {
+            const query = this.value;
+
+            if (query.length > 0) {
+                fetch(`/category-suggestions/?query=${query}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        let suggestionBox = document.getElementById('suggestions');
+                        suggestionBox.innerHTML = '';  // Clear previous suggestions
+
+                        data.forEach(item => {
+                            let listItem = document.createElement('li');
+                            listItem.textContent = item;
+                            suggestionBox.appendChild(listItem);
+                        });
+                    });
+            }
+        });
+    function debounce(func, delay) {
+        let timeout;
+        return function () {
+            const context = this;
+            const args = arguments;
+            clearTimeout(timeout);
+            timeout = setTimeout(() => func.apply(context, args), delay);
+        };
+    }
+    categoryInput.addEventListener('input', debounce(function () {
+        const query = this.value;
+        // Make the AJAX request here as before
+    }, 3));  // Delay of 300 milliseconds
+
+</script>
+{% endblock content %}
